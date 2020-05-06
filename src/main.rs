@@ -12,6 +12,7 @@ mod persistent_list_map;
 mod persistent_vector;
 mod reader;
 mod repl;
+mod nrepl_server;
 mod rust_core;
 mod clojure_std;
 mod symbol;
@@ -25,6 +26,8 @@ fn main() {
     //
     // Start repl
     //
-    let repl = repl::Repl::default();
-    repl.run();
+    // let repl = repl::Repl::default();
+    // repl.run();
+    // TODO: add proper error handling here
+    nrepl_server::Server::run().expect("NREPL failed");
 }
