@@ -1,12 +1,10 @@
 //! Creates and maintain a simple NREPL server.
 
 use std::{
-    io::Result,
-    net::{
-        TcpListener,
-        Ipv4Addr,
-        SocketAddrV4,
-    },
+    dbg,
+    io::{Read, Result},
+    net::{Ipv4Addr, SocketAddrV4, TcpListener},
+    str,
 };
 
 const SERVER_PORT: u16 = 5555;
@@ -31,10 +29,22 @@ impl Server {
         let addr = nrepl_default_address();
         let listener = TcpListener::bind(addr)?;
 
-        for event in listener.incoming() {
-            todo!();
+        println!("Server started");
+        let (mut stream, addr) = listener.accept()?;
+        println!("New client at {}", addr);
+
+        loop {
+            let mut input_buffer = [0; 128];
+            stream.read(&mut input_buffer);
+
+            if input_buffer[0] == 0 {
+                break;
+            }
+
+            let s = str::from_utf8(&input_buffer).unwrap();
+            println!("Got data from {}: {}", &addr, s);
         }
 
-        todo!();
+        Ok(())
     }
 }
