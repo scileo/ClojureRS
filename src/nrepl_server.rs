@@ -41,22 +41,22 @@ impl Server {
 
         let (mut stream, addr) = listener.accept()?;
 
-        let mut repl = Repl::default();
+        println!("Starting server...");
 
         loop {
             if is_empty(&stream)? {
                 break;
             }
 
-            let mut input = BufReader::new(&stream);
+            let mut buffer = [0; 128];
+            let bytes_received = stream.read(&mut buffer)?;
 
-            let next = Repl::read(&mut input);
+            let s = str::from_utf8(&buffer).unwrap();
+            println!("Received some data: {}", s);
 
-            let evaled_next = repl.eval(&next);
-
-            let to_send = format!("{}\n", evaled_next);
-
+            let to_send = "{:out \";; nREPL 0.6.0\n;; Clojure 1.10.0\nuser=> \"}";
             stream.write(to_send.as_bytes());
+
         }
 
         Ok(())
